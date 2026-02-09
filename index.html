@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💜 Para ti</title>
+
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#2a0f3a;
+      --card: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.18);
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.72);
+      --accent:#ff4d8d;
+      --accent2:#7c4dff;
+    }
+
+    *{ box-sizing:border-box }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 20%, var(--bg2), transparent 60%),
+        radial-gradient(1200px 800px at 80% 80%, #0a2a4a, transparent 60%),
+        linear-gradient(160deg, var(--bg1), #060713 70%);
+      overflow:hidden;
+    }
+
+    .wrap{
+      position:relative;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      z-index:2;
+    }
+
+    .card{
+      width:min(680px, 92vw);
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:28px 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      text-align:center;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:14px;
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background: linear-gradient(45deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,77,141,.6);
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size: clamp(28px, 4.3vw, 42px);
+    }
+
+    p{
+      margin: 10px auto 18px;
+      max-width: 52ch;
+      color: var(--muted);
+      font-size: clamp(14px, 2.4vw, 18px);
+      line-height:1.5;
+    }
+
+    .buttons{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:10px;
+    }
+
+    button{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      padding:12px 18px;
+      border-radius:14px;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .yes{
+      background: linear-gradient(135deg, rgba(255,77,141,.35), rgba(124,77,255,.25));
+      border-color: rgba(255,77,141,.6);
+      box-shadow: 0 12px 28px rgba(255,77,141,.25);
+    }
+
+    .final{
+      display:none;
+      margin-top:18px;
+      padding:16px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.18);
+    }
+
+    .hearts{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .heart{
+      --s:16px;
+      position:absolute;
+      width:var(--s);
+      height:var(--s);
+      background: linear-gradient(45deg, var(--accent), var(--accent2));
+      transform: rotate(45deg);
+      animation: floatUp linear forwards;
+    }
+
+    .heart::before,
+    .heart::after{
+      content:"";
+      position:absolute;
+      width:var(--s);
+      height:var(--s);
+      border-radius:50%;
+      background:inherit;
+    }
+
+    .heart::before{ left:calc(var(--s)*-0.5); }
+    .heart::after{ top:calc(var(--s)*-0.5); }
+
+    @keyframes floatUp{
+      to{ transform: translateY(-120vh) rotate(45deg); opacity:0; }
+    }
+
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      display:none;
+      z-index:3;
+    }
+
+    .piece{
+      position:absolute;
+      width:8px;
+      height:14px;
+      background:white;
+      animation: fall 1.8s forwards;
+    }
+
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(520deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🎵 CANCIÓN -->
+  <audio id="music" loop>
+    <source src="cancion.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="hearts" id="hearts"></div>
+  <div class="confetti" id="confetti"></div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="badge"><span class="dot"></span> Mensaje especial</div>
+
+      <h1>¿Quieres ser mi San Valentín? 💜</h1>
+
+      <p id="subtitle">
+        Prometo AMARTE, respetarte y esforzarme para tener una vida juntos,
+        por el resto de mi vida hasta el día que me llame San Pedro
+      </p>
+
+      <div class="buttons" id="btnArea">
+        <button class="yes" id="btnYes">Sí 💞</button>
+        <button id="btnNo">No 🙃</button>
+      </div>
+
+      <div class="final" id="finalBox">
+        <h2>Eres la mejor persona del mundo 🥰</h2>
+        <p>Te AMO muchísimo mi princesita hermosa, espero que recuerdes esto, TE AMO 💜</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const btnNo = document.getElementById("btnNo");
+    const btnYes = document.getElementById("btnYes");
+    const btnArea = document.getElementById("btnArea");
+    const finalBox = document.getElementById("finalBox");
+    const confetti = document.getElementById("confetti");
+    const hearts = document.getElementById("hearts");
+    const music = document.getElementById("music");
+
+    music.volume = 0.4; // volumen suave
+
+    setInterval(()=>{
+      const h=document.createElement("div");
+      h.className="heart";
+      h.style.setProperty("--s",(10+Math.random()*18)+"px");
+      h.style.left=Math.random()*100+"vw";
+      h.style.bottom="-30px";
+      h.style.animationDuration=(4+Math.random()*4)+"s";
+      hearts.appendChild(h);
+      setTimeout(()=>h.remove(),9000);
+    },220);
+
+    btnNo.addEventListener("mouseenter",()=>{
+      btnNo.style.position="fixed";
+      btnNo.style.left=Math.random()*80+"vw";
+      btnNo.style.top=Math.random()*80+"vh";
+    });
+
+    function blastConfetti(){
+      confetti.style.display="block";
+      confetti.innerHTML="";
+      for(let i=0;i<80;i++){
+        const p=document.createElement("div");
+        p.className="piece";
+        p.style.left=Math.random()*100+"vw";
+        confetti.appendChild(p);
+      }
+      setTimeout(()=>confetti.style.display="none",2200);
+    }
+
+    btnYes.addEventListener("click",()=>{
+      finalBox.style.display="block";
+      btnArea.style.display="none";
+      document.getElementById("subtitle").textContent="😌💜 ¡Gracias por aceptar! 😌💜";
+      blastConfetti();
+      music.play();
+    });
+  </script>
+
+</body>
+</html>
